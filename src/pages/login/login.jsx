@@ -1,8 +1,12 @@
 import React, {Component} from 'react'
-import { Form, Icon, Input, Button } from 'antd'
+import { Form, Icon, Input, Button, message} from 'antd'
 
 import './login.less'
-import logo from './images/logo.png'
+import logo from '../../assets/images/logo.png'
+import {reqLogin} from '../../api'
+import memoryUtils from '../../utils/memoryUtils'
+import storageUtils from '../../utils/storageUtils'
+import { Redirect } from 'react-router-dom'
 
 const Item  = Form.Item // 只能写在import后面，否则会报错
 /**
@@ -16,9 +20,48 @@ class Login extends Component {
 
   // 获取form对象
   const form = this.props.form
+  // 提交前对表单所有数据进行统一验证
+  form.validateFields(async(err, values) => {
+    // 校验成功
+    if (!err) {
+      // TODO:提交登录的ajax请求
+      const {username, password} = values
+      // 1、采用异步方式处理
+      // reqLogin(username, password).then(response => {
+      //   console.log('成功了', response.data)
+      // }).catch(error => {
+      //   console.log('失败了', error)
+      // })
+      // 2、采用async和await同步方式处理异步
+      // try {
+      //   const promise = await reqLogin(username, password)
+      //   console.log('请求成功', promise.data)
+      // } catch (error) {
+      //   console.log('请求失败', error)
+      // }
+      // 3、在ajax请求中统一处理请求异常，页面中不用处理
+      const result = await reqLogin(username, password)
+      console.log('请求成功', result)// {status: 0, data: user} {status: 1, msg: 'xxx'}
+      if (result.status === 0) { // 登录成功
+        message.success('登录成功')
+        // 跳转到管理页面(不需要再回退回来)
+        const user = result.data
+        // 将user对象存到内存中
+        memoryUtils.user = user
+        // 将对象保存到localStorage中
+        storageUtils.saveUser(user)
+        this.props.history.replace('/')
+      }else { // 登录失败
+        message.error(result.msg)
+      }
+      console.log('Recevied values of form: ', values)
+    } else {
+      console.log('提交失败：', err)
+    }
+  })
   // 获取表单的输入数据
-  const values = form.getFieldsValue()
-  console.log('========', values)
+  // const values = form.getFieldsValue()
+  // console.log('========', values)
   }
   /**
    * 自定义表单校验规则
@@ -42,6 +85,9 @@ class Login extends Component {
     const form = this.props.form
     // 得到表单项的输入数据--解构赋值
     const { getFieldDecorator } = form
+    if (memoryUtils.user && memoryUtils.user._id) {
+      return <Redirect to="/"/>
+    }
     return (
       <div className="login">
         <header className="login-header">
@@ -118,4 +164,14 @@ export default WrapLogin
 /**
  * 1.前台验证表单数据
  * 2.收集表单数据
+ */
+/**
+ * async和await
+ * 1、作用？
+ *    简化promise对象的使用：不用再使用then（）来指定成功/失败的回调函数
+ *    以同步编码（没有回调函数了）方式实现异步流程
+ * 2、哪里写await？
+ *    在返回promise的表达式左侧写await：不想要promise，想要promise异步执行成功的value数据
+ * 3、哪里写async？
+ *    await所在（最近）函数定义的左侧写async
  */
