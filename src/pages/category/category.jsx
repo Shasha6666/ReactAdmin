@@ -42,10 +42,10 @@ class Category extends Component {
     ];
   }
   /**
-   * 异步获取一级分类列表显示
+   * 异步获取一级/二级分类列表显示
    */
-  getCategorys = async() => {
-    const {parentId} = this.state
+  getCategorys = async(parentId) => {
+    parentId = parentId || this.state.parentId
     this.setState({loading: true})
     const result = await reqCategorys(parentId)
     this.setState({loading: false})
@@ -83,15 +83,6 @@ class Category extends Component {
       subCategorys: []
     })
   }
-  // 为第一次render准备数据/处理同步请求数据
-  componentWillMount() {
-    this.initColumns()
-  }
-  // 执行异步任务：发异步ajax请求
-  componentDidMount() {
-    // 获取一级分类列表显示
-    this.getCategorys()
-  }
   // 显示新增分类的操作
   showAdd = () => {
     this.setState({
@@ -121,26 +112,62 @@ class Category extends Component {
    */
   addCategory = () => {
     console.log('新增分类')
+    this.form.validateFields(async(err, values) => {
+      if(!err) {
+        // 1.隐藏确认框
+        this.setState({
+          showStatus: 0
+        })
+        // 2.发请求更新分类
+        const {parentId, categoryName} = values
+        // 清除输入数据
+        this.form.resetFields()
+        const result = await reqAddCategory({parentId, categoryName})
+        if (result.status === 0) {
+          // 3.重新显示列表
+          // 如果添加的分类就是当前分类下的
+          if(parentId === this.state.parentId) {
+            // 直接获取分类列表
+            this.getCategorys()
+          } else if (parentId === '0') {
+            this.getCategorys('0')
+          }
+        }
+      }
+    })
   }
   /**
    * 处理更新的事件
    */
-  updateCategory = async() => {
+  updateCategory = () => {
     console.log('更新分类')
-    // 1.隐藏确认框
-    this.setState({
-      showStatus: 0
+    this.form.validateFields(async(err, values) => {
+      if(!err) {
+        // 1.隐藏确认框
+        this.setState({
+          showStatus: 0
+        })
+        const categoryId = this.category._id
+        const {categoryName} = values
+        // 清除输入数据
+        this.form.resetFields()
+        // 2.发请求更新分类
+        const result = await reqUpdateCategory({categoryName, categoryId})
+        if (result.status === 0) {
+          // 3.重新显示列表
+          this.getCategorys()
+        }
+      }
     })
-    const categoryId = this.category._id
-    const categoryName = this.form.getFieldValue('categoryName')
-    // 清楚输入数据
-    this.form.resetFields()
-    // 2.发请求更新分类
-    const result = await reqUpdateCategory({categoryName, categoryId})
-    if (result.status === 0) {
-      // 3.重新显示列表
-      this.getCategorys()
-    }
+  }
+  // 为第一次render准备数据/处理同步请求数据
+  componentWillMount() {
+    this.initColumns()
+  }
+  // 执行异步任务：发异步ajax请求
+  componentDidMount() {
+    // 获取一级分类列表显示
+    this.getCategorys()
   }
   render() { 
     // 读取状态数据
@@ -175,7 +202,11 @@ class Category extends Component {
           onOk={this.addCategory}
           onCancel={this.handleCancle}
         >
-          <AddForm/>
+          <AddForm 
+            categorys={categorys}
+            parentId={parentId}
+            setForm={(form) => {this.form = form}}
+          />
         </Modal>
         <Modal
           title="更新分类"
