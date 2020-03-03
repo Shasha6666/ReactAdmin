@@ -66,7 +66,7 @@ class Header extends Component {
     // 获取当前时间
     this.getTime()
     // 获取当前天气显示
-    this.getWeather()
+    // this.getWeather()
   }
   // 当前组件卸载之前调用
   componentWillUnmount() {

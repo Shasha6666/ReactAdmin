@@ -34,3 +34,12 @@ export const reqCategorys = (parentId) => ajax('/manage/category/list', {parentI
 export const reqAddCategory = ({parentId, categoryName}) => ajax('/manage/category/add', {parentId, categoryName}, 'POST')
 // 更新分类
 export const reqUpdateCategory = ({categoryId, categoryName}) => ajax('/manage/category/update', {categoryId, categoryName}, 'POST')
+// 根据id获取分类的名称
+export const reqCategory = (categoryId) => ajax('/manage/category/info', {categoryId})
+
+// 获取商品分页列表
+export const reqProducts = (pageNum, pageSize) => ajax('/manage/product/list', {pageNum, pageSize})
+// 根据ID/Name搜索产品分页列表,searchType表示搜索的类型：productName/productDesc
+export const reqSearchProducts = ({pageNum, pageSize, searchType, searchName}) => ajax('/manage/product/search', {pageNum, pageSize, [searchType]:searchName})
+// 更新商品状态
+export const reqUpdateStatus = (productId, status) => ajax('/manage/product/updateStatus', {productId, status}, 'POST')
