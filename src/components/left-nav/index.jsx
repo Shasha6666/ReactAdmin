@@ -25,7 +25,7 @@ class leftNav extends Component {
         )
       } else {
         //查找一个与当前请求路径匹配的子Item
-        const cItem = item.children.find(cItem => cItem.key === path)
+        const cItem = item.children.find(cItem => path.indexOf(cItem) === 0)
         // 如果存在，说明当前item的子列表需要打开
         if (cItem) {
           this.openKey = item.key
@@ -69,7 +69,7 @@ class leftNav extends Component {
       } else {
         // 向pre添加<SubMenu>
         //查找一个与当前请求路径匹配的子Item
-        const cItem = item.children.find(cItem => cItem.key === path)
+        const cItem = item.children.find(cItem => path.indexOf(cItem.key) === 0)
         // 如果存在，说明当前item的子列表需要打开
         if (cItem) {
           this.openKey = item.key
@@ -102,7 +102,10 @@ class leftNav extends Component {
   }
   render() { 
     // 获取到当前页面的路径
-    const path = this.props.location.pathname
+    let path = this.props.location.pathname
+    if(path.indexOf('/product')===0) {
+      path = '/product'
+    }
     const openKey = this.openKey
     return ( 
     <div className="left-nav">
