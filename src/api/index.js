@@ -43,3 +43,9 @@ export const reqProducts = (pageNum, pageSize) => ajax('/manage/product/list', {
 export const reqSearchProducts = ({pageNum, pageSize, searchType, searchName}) => ajax('/manage/product/search', {pageNum, pageSize, [searchType]:searchName})
 // 更新商品状态
 export const reqUpdateStatus = (productId, status) => ajax('/manage/product/updateStatus', {productId, status}, 'POST')
+// 删除上传的图片
+export const reqDeleteImg = (name) => ajax('/manage/img/delete', {name}, 'POST')
+// 添加商品
+export const reqAddOrUpdateProduct = (product) => ajax('/manage/product/' + (product._id?'update':'add'), product, 'POST')
+// 修改商品
+// export const requPDATEProduct = (product) => ajax('/manage/product/update', product, 'POST')

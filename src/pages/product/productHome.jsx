@@ -62,14 +62,14 @@ class ProductHome extends Component {
         render: (price) => '￥' + price // 当前指定了对应的属性，传入的是对应的属性值
       },
       {
-        width: 100,
+        width: 200,
         title: '状态',
         // dataIndex: 'status',
         render: (product) => {
           const {status, _id} = product
           const newStatus = status=== 1 ? 2 : 1
           return (
-            <span>
+            <span style={{display: 'flex', justifyContent: 'space-evenly', alignItems: 'center'}}>
               <Button type='primary' onClick={() => this.updateStatus(_id, newStatus)}>
                 {status === 1 ? '下架': '上架'}
               </Button>
@@ -79,12 +79,12 @@ class ProductHome extends Component {
           }
       },
       {
-        width: 100,
+        width: 150,
         title: '操作',
         render: (product) => (
-          <span>
+          <span style={{display: 'flex', justifyContent: 'space-evenly', alignItems: 'center'}}>
             <LinkButton onClick={() => this.props.history.push('/product/detail', product)}>详情</LinkButton>
-            <LinkButton>修改</LinkButton>
+            <LinkButton onClick={() => this.props.history.push('/product/addupdate', product)}>修改</LinkButton>
           </span>
         )
       }

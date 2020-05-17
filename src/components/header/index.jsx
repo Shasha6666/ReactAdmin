@@ -36,7 +36,7 @@ class Header extends Component {
         title = item.title
       } else if (item.children) {
         // 在所有子item中查找
-        const cItem = item.children.find(cItem => cItem.key === path)
+        const cItem = item.children.find(cItem => path.indexOf(cItem.key) === 0)
         if(cItem) {
           title = cItem.title
         }
