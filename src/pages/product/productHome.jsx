@@ -142,6 +142,7 @@ class ProductHome extends Component {
               defaultPageSize: PAGE_SIZE, 
               showQuickJumper:true,
               total: {total},
+              current: this.pageNum,
               onChange: this.getProducts
             }
           }

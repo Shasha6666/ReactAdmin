@@ -5,6 +5,7 @@ import { reqRoles, reqAddRole,reqUpdateRole } from '../../api'
 import AddForm from './add-form'
 import AuthForm from './auth-form'
 import memoryUtils from '../../utils/memoryUtils'
+import storageUtils from '../../utils/storageUtils'
 import {formateDate} from '../../utils/dateUtils'
 /**
  * 角色管理路由组件
@@ -106,8 +107,16 @@ class Role extends Component {
       isShowAuth: false
     })
     if(result.status === 0) {
-      message.success('设置权限成功')
-      this.getRoles()
+      // 如果当前更新的是自己角色的权限，强制退出
+      if(role._id === memoryUtils.user.role_id) {
+        memoryUtils.user = {}
+        storageUtils.removeUser()
+        this.props.history.replace('/login')
+        message.info('当前角色权限更新，请重新登录')
+      } else {
+        message.success('设置权限成功')
+        this.getRoles()
+      } 
     }
   }
   componentWillMount() {
@@ -129,7 +138,15 @@ class Role extends Component {
         <Table
           bordered
           rowKey='_id'
-          rowSelection={{type: 'radio', selectedRowKeys: [role._id]}}
+          rowSelection={{
+            type: 'radio', 
+            selectedRowKeys: [role._id],
+            onSelect: (role) => {
+              this.setState({ // 选择 某个radio时回调
+                role
+              })
+            }
+          }}
           dataSource={roles} 
           columns={this.columns}
           pagination={
