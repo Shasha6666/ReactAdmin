@@ -10,7 +10,7 @@ import jsonp from 'jsonp'
 // 登录请求的接口
 export const reqLogin = (username, password) => ajax('/login', {username, password}, 'POST')
 // 添加用户的接口
-export const reqAddUser = (user) => ajax('/manage/user/add', user, 'POST')
+// export const reqAddUser = (user) => ajax('/manage/user/add', user, 'POST')
 // 通过jsonp请求获取天气的值
 export const reqWeather = (city) => {
   const url = `http://v.juhe.cn/weather/index?format=2&cityname=${city}&key=81f583558962dd121fb5b7f6bff8467e`
@@ -43,3 +43,21 @@ export const reqProducts = (pageNum, pageSize) => ajax('/manage/product/list', {
 export const reqSearchProducts = ({pageNum, pageSize, searchType, searchName}) => ajax('/manage/product/search', {pageNum, pageSize, [searchType]:searchName})
 // 更新商品状态
 export const reqUpdateStatus = (productId, status) => ajax('/manage/product/updateStatus', {productId, status}, 'POST')
+// 删除上传的图片
+export const reqDeleteImg = (name) => ajax('/manage/img/delete', {name}, 'POST')
+// 添加商品
+export const reqAddOrUpdateProduct = (product) => ajax('/manage/product/' + (product._id?'update':'add'), product, 'POST')
+// 修改商品
+// export const requPDATEProduct = (product) => ajax('/manage/product/update', product, 'POST')
+// 获取所有角色的列表
+export const reqRoles = () => ajax('/manage/role/list')
+// 添加角色
+export const reqAddRole = (roleName) => ajax('/manage/role/add', {roleName}, 'POST')
+// 更新角色
+export const reqUpdateRole = (role) => ajax('/manage/role/update', role, 'POST')
+// 获取所有用户列表
+export const reqUsers = () => ajax('/manage/user/list')
+// 删除用户
+export const reqDeleteUser = (userId) => ajax('/manage/user/delete',{userId}, 'POST')
+// 添加/更新用户
+export const reqAddOrUpdateUser = (user) => ajax('/manage/user/'+(user._id ? 'update' : 'add'), user, 'POST')
