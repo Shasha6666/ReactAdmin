@@ -4,6 +4,7 @@ import LinkButton from '../../components/link-button'
 import {reqCategorys, reqAddOrUpdateProduct} from '../../api'
 import PicturesWall from './picturesWall'
 import RichTextEditor from './RichTextEditor'
+import memoryUtils from '../../utils/memoryUtils'
 
 
 const {Item} = Form
@@ -135,11 +136,17 @@ class ProductAddUpdate extends Component {
   }
   componentWillMount () {
     // 取出携带的state
-    const product = this.props.location.state
+    const product = memoryUtils.product
     // 保存是否更新的标识
-    this.isUpdate = !!product
+    this.isUpdate = !!product._id
     // 保存商品，如果没有，保存的是{}
     this.product = product || {}
+  }
+  /**
+   * 再卸载之前清除保存的数据
+   */
+  componentWillUnmount () {
+    memoryUtils.product = {}
   }
   render() { 
     const {getFieldDecorator} = this.props.form

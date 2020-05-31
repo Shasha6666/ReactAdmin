@@ -3,6 +3,7 @@ import {Card, Select, Input, Icon, Button, Table,message} from 'antd'
 import LinkButton from '../../components/link-button'
 import {reqProducts, reqSearchProducts, reqUpdateStatus} from '../../api'
 import {PAGE_SIZE} from '../../utils/constants'
+import memoryUtils from '../../utils/memoryUtils'
 
 const Option = Select.Option
 /**
@@ -53,12 +54,20 @@ class ProductHome extends Component {
         title: '操作',
         render: (product) => (
           <span style={{display: 'flex', justifyContent: 'space-evenly', alignItems: 'center'}}>
-            <LinkButton onClick={() => this.props.history.push('/product/detail', product)}>详情</LinkButton>
-            <LinkButton onClick={() => this.props.history.push('/product/addupdate', product)}>修改</LinkButton>
+            <LinkButton onClick={() => this.showDetail(product)}>详情</LinkButton>
+            <LinkButton onClick={() => this.showUpdate(product)}>修改</LinkButton>
           </span>
         )
       }
     ]
+  }
+  showDetail = (product) => {
+    memoryUtils.product = product
+    this.props.history.push('/product/detail')
+  }
+  showUpdate = (product) => {
+    memoryUtils.product = product
+    this.props.history.push('/product/addupdate')
   }
   /**
    * 更新商品状态
