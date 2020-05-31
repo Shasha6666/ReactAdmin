@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-import memoryUtils from '../../utils/memoryUtils'
+import {connect} from 'react-redux'
 import { Redirect, Switch, Route } from 'react-router-dom'
 import { Layout } from 'antd'
 import LeftNav from '../../components/left-nav'
@@ -18,9 +18,9 @@ const { Footer, Sider, Content } = Layout
 /**
  * 登录的路由组件
  */
-export default class Admin extends Component {
+class Admin extends Component {
   render() {
-    const user = memoryUtils.user
+    const user = this.props.user
     if (!user || !user._id) {
       // 自动跳转到登录（在render（）中）
       return <Redirect to="/login"/>
@@ -51,3 +51,6 @@ export default class Admin extends Component {
   )
   }
 }
+export default connect(
+  state => ({user: state.user})
+)(Admin)

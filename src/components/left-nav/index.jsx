@@ -4,7 +4,8 @@ import { Link, withRouter } from 'react-router-dom'
 import logo from '../../assets/images/logo.png'
 import { Menu, Icon } from 'antd'
 import menuList from '../../config/menuConfig'
-import memoryUtils from '../../utils/memoryUtils'
+import {connect} from 'react-redux'
+import {setHeadTitle} from '../../redux/actions'
 
 const { SubMenu } = Menu
 class leftNav extends Component {
@@ -14,8 +15,8 @@ class leftNav extends Component {
    */
   hasAuth = (item) => {
     const {key, isPublic} = item
-    const menus = memoryUtils.user.role.menus
-    const username = memoryUtils.user.username
+    const menus = this.props.user.role.menus
+    const username = this.props.user.username
     /*
     1. 如果当前用户是admin
     2. 如果当前item是公开的
@@ -79,11 +80,14 @@ class leftNav extends Component {
       // 如果当前用户有item对应的权限，才需要显示对应的菜单项
       if(this.hasAuth(item)) {
         if (!item.children) {
+          if(item.key === path || path.indexOf(item.key) === 0) {
+            this.props.setHeadTitle(item.title)
+          }
           // 向pre添加<Menu.Item>
           pre.push(
             (
               <Menu.Item key={item.key}>
-                <Link to = {item.key}>
+                <Link to = {item.key} onClick={() => this.props.setHeadTitle(item.title)}>
                   <Icon type={item.icon} />
                   <span>{item.title}</span>
                 </Link>
@@ -154,4 +158,7 @@ class leftNav extends Component {
  * withRouter()高阶组件，包装非路由组件返回一个包装后的新组件
  * 新组件会向被包装组件传递history、location、match属性
  */
-export default withRouter(leftNav)
+export default connect(
+  state => ({user:state.user}),
+  {setHeadTitle}
+)(withRouter(leftNav)) 
